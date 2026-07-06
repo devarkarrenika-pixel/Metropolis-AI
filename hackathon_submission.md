@@ -30,39 +30,9 @@ This document compiles the exhaustive project documentation required for the hac
 *   **Democratic Civic Feedback**: Provides citizens with a public portal to report hazards and upvote issues, which the AI Policy Engine automatically aggregates to draft legislative directives.
 
 ### C. Core Architecture & Workflow
-```mermaid
-graph TD
-    subgraph 1. Ingestion Layer
-        A1[IoT Sensors: AQI/Flow/Power]
-        A2[Vertex CCTV Camera Feeds]
-        A3[Citizen Voice/Web Complaints]
-    end
+Below is the system architecture and data processing flow showing ingestion, storage, AI decision logic, and Pub/Sub physical gate actuation:
 
-    subgraph 2. Storage & Warehousing
-        B1[(BigQuery Telemetry Warehouse)]
-        B2[(Vector DB: RAG Embeddings)]
-    end
-
-    subgraph 3. Analytics & Decision
-        C1[LSTM / XGBoost Predictors]
-        C2[Gemini Decision Assistant]
-        C3[ADK Multi-Agent Collaboration]
-    end
-
-    subgraph 4. Actuation & UI
-        D1[Leaflet GIS Live Web Console]
-        D2[GCP Pub/Sub Alert Queues]
-        D3[Physical Actuators: Sluice Gates]
-    end
-
-    A1 -->|Streaming Load| B1
-    A2 & A3 -->|Vertex APIs| B1
-    B1 -->|RAG Embedding Index| B2
-    B1 & B2 --> C1 & C2 & C3
-    C1 -->|Trigger thresholds| D2
-    C2 -->|Traceable Lineage| D1
-    D2 -->|Automated dispatch| D3
-```
+![Metropolis AI System Flowchart](./assets/process_flow_diagram.png)
 
 ---
 

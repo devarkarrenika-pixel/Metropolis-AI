@@ -34,6 +34,11 @@ Below is the system architecture and data processing flow showing ingestion, sto
 
 ![Metropolis AI System Flowchart](./assets/process_flow_diagram.png)
 
+### D. Google Cloud System Architecture
+Below is the structural relationship of Google Cloud components, data pipelines, and security layers:
+
+![Metropolis AI GCP Architecture Diagram](./assets/architecture_diagram.png)
+
 ---
 
 ## 3. Differentiation & Unique Selling Proposition (USP)

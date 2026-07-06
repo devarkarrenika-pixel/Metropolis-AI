@@ -1,0 +1,7 @@
+# System/IDE logs
+*.log
+.Antigravity/
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Metropolis AI: The ultimate decision intelligence command center for smart city planning, forecasting, and autonomous operations.">
+  <title>Metropolis AI - Smart City Command Center</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <!-- Main Grid App Container -->
+  <div class="app-container">
+    
+    <!-- Top Alert Banner for urgent notifications -->
+    <div id="urgent-alert-banner" class="alert-banner warning hidden">
+      <div class="alert-content">
+        <i class="fa-solid fa-triangle-exclamation pulse"></i>
+        <span id="alert-banner-text">Warning: Heavy precipitation forecasted for Sector 7 in 1 hour. Flood risks rising.</span>
+      </div>
+      <button id="alert-dismiss-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Navigation Sidebar -->
+    <aside class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-city"></i></div>
+        <div class="logo-text">METROPOLIS<span>AI</span></div>
+      </div>
+      
+      <!-- Theme Selection Dropdown -->
+      <div class="theme-selector-container">
+        <label for="theme-preset-select"><i class="fa-solid fa-palette"></i> Active Theme</label>
+        <div class="select-wrapper">
+          <select id="theme-preset-select">
+            <option value="midnight">Midnight Neon</option>
+            <option value="solar">Solar Flare</option>
+            <option value="forest">Forest Canopy</option>
+            <option value="cyberpunk">Cyberpunk Grid</option>
+          </select>
+        </div>
+      </div>
+      
+      <nav class="nav-links">
+        <button class="nav-item active" data-target="dashboard" id="nav-dash">
+          <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-target="predictive" id="nav-predict">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Predictive Engine</span>
+        </button>
+        <button class="nav-item" data-target="satellite" id="nav-sat">
+          <i class="fa-solid fa-satellite"></i> <span>Satellite & Geo</span>
+        </button>
+        <button class="nav-item" data-target="multimodal" id="nav-multi">
+          <i class="fa-solid fa-eye"></i> <span>Multimodal AI</span>
+        </button>
+        <button class="nav-item" data-target="workflows" id="nav-flow">
+          <i class="fa-solid fa-route"></i> <span>Workflows</span>
+        </button>
+        <button class="nav-item" data-target="community" id="nav-comm">
+          <i class="fa-solid fa-users"></i> <span>Community Hub</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-status">
+        <div class="status-heading">SYSTEM HEALTH</div>
+        <div class="status-indicator online">
+          <span class="dot"></span> <span>Vertex AI Node Online</span>
+        </div>
+        <div class="status-indicator online">
+          <span class="dot"></span> <span>BigQuery Sync Active</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main class="main-workspace">
+      
+      <!-- HEADER -->
+      <header class="workspace-header">
+        <div class="header-title-area">
+          <h1 id="page-title">City Command Overview</h1>
+          <p id="page-subtitle">Real-time BigQuery data sync + Multi-agent automation</p>
+        </div>
+        <div class="header-actions">
+          <button id="btn-gen-report" class="action-btn header-btn"><i class="fa-solid fa-file-pdf"></i> Export Report</button>
+          <div class="time-widget">
+            <i class="fa-regular fa-clock"></i> <span id="current-time">00:00:00</span>
+          </div>
+          <div class="header-badge">
+            <i class="fa-solid fa-circle-nodes"></i> ADK Active (4 Agents)
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEW PANELS CONTAINER -->
+      <div class="panels-container">
+
+        <!-- 1. DASHBOARD PANEL -->
+        <section id="panel-dashboard" class="view-panel active">
+          
+          <!-- Key Metrics Row -->
+          <div class="metrics-grid">
+            <div class="metric-card card-glow-green">
+              <div class="metric-header">
+                <span>Air Quality Index</span>
+                <i class="fa-solid fa-wind text-green"></i>
+              </div>
+              <div class="metric-value" id="val-aqi">42 <span class="unit">AQI</span></div>
+              <div class="metric-footer text-green">
+                <i class="fa-solid fa-caret-down"></i> 8% since last hour (Optimal)
+              </div>
+            </div>
+
+            <div class="metric-card card-glow-blue">
+              <div class="metric-header">
+                <span>Water Storage Level</span>
+                <i class="fa-solid fa-droplet text-blue"></i>
+              </div>
+              <div class="metric-value" id="val-water">84.2 <span class="unit">%</span></div>
+              <div class="metric-footer text-blue">
+                <i class="fa-solid fa-circle-check"></i> Normal supply pressure
+              </div>
+            </div>
+
+            <div class="metric-card card-glow-orange">
+              <div class="metric-header">
+                <span>Average Traffic Speed</span>
+                <i class="fa-solid fa-car-side text-orange"></i>
+              </div>
+              <div class="metric-value" id="val-traffic">34 <span class="unit">km/h</span></div>
+              <div class="metric-footer text-red">
+                <i class="fa-solid fa-caret-down"></i> 12% drop near Sector 4
+              </div>
+            </div>
+
+            <div class="metric-card card-glow-purple">
+              <div class="metric-header">
+                <span>Grid Power Load</span>
+                <i class="fa-solid fa-bolt text-purple"></i>
+              </div>
+              <div class="metric-value" id="val-power">1.42 <span class="unit">GW</span></div>
+              <div class="metric-footer text-orange">
+                <i class="fa-solid fa-caret-up"></i> Peak demand alert (85%)
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Visualizations (Looker / BigQuery simulation) -->
+          <div class="dashboard-grid">
+            
+            <!-- Resource Grid Load & Consumption -->
+            <div class="dashboard-card main-chart-card">
+              <div class="card-title">
+                <h3><i class="fa-solid fa-chart-column"></i> Resource Usage & Load Trends</h3>
+                <div class="card-options">
+                  <span class="badge badge-bigquery"><i class="fa-solid fa-database"></i> BigQuery Live</span>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="resourceChart"></canvas>
+              </div>
+            </div>
+
+            <!-- City Risk Heatmap/Zones simulation list -->
+            <div class="dashboard-card risk-zones-card">
+              <div class="card-title">
+                <h3><i class="fa-solid fa-circle-exclamation"></i> Sector Risk Analysis</h3>
+                <span>Updated 1m ago</span>
+              </div>
+              <div class="risk-list">
+                <div class="risk-item critical">
+                  <div class="risk-badge">CRITICAL</div>
+                  <div class="risk-info">
+                    <h4>Sector 4: Congestion Spike</h4>
+                    <p>Delay time +40% at crossroads. Traffic Agent rerouting active.</p>
+                  </div>
+                </div>
+                <div class="risk-item warning">
+                  <div class="risk-badge">WARNING</div>
+                  <div class="risk-info">
+                    <h4>Sector 7: Impending Rain Peak</h4>
+                    <p>Expected 42mm precipitation. Flood gate sensors on alert.</p>
+                  </div>
+                </div>
+                <div class="risk-item nominal">
+                  <div class="risk-badge">NOMINAL</div>
+                  <div class="risk-info">
+                    <h4>Sector 1: Utility Balancing</h4>
+                    <p>Water distribution stable. Power grid reserve at 22%.</p>
+                  </div>
+                </div>
+                <div class="risk-item nominal">
+                  <div class="risk-badge">NOMINAL</div>
+                  <div class="risk-info">
+                    <h4>Sector 9: Medical Load</h4>
+                    <p>Hospital capacity at 62%. Health Agent reports low viral transmission.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- 2. PREDICTIVE ENGINE PANEL -->
+        <section id="panel-predictive" class="view-panel">
+          <div class="predictive-workspace">
+            
+            <!-- Left Side Control Panel -->
+            <div class="predict-controls-card">
+              <h3><i class="fa-solid fa-sliders"></i> Engine Configuration</h3>
+              <div class="input-group">
+                <label for="predict-model-select">ML Forecasting Model</label>
+                <div class="select-wrapper">
+                  <select id="predict-model-select">
+                    <option value="lstm">LSTM (Long Short-Term Memory Network)</option>
+                    <option value="xgboost">XGBoost (Extreme Gradient Boosting)</option>
+                  </select>
+                </div>
+                <p class="input-desc">LSTM captures complex temporal dependencies; XGBoost handles structured tabular anomalies.</p>
+              </div>
+
+              <div class="input-group">
+                <label for="predict-target-select">Forecast Target</label>
+                <select id="predict-target-select">
+                  <option value="traffic">Traffic Congestion Delay (min)</option>
+                  <option value="pollution">Pollution Concentration (AQI)</option>
+                  <option value="hospital">Hospital Emergency Demand (admissions)</option>
+                  <option value="electricity">Electricity Consumption (MW)</option>
+                </select>
+              </div>
+
+              <div class="divider"></div>
+
+              <h3><i class="fa-solid fa-circle-nodes"></i> Environmental Modifiers</h3>
+              
+              <div class="modifier-slider">
+                <div class="slider-labels">
+                  <span>Simulated Rainfall</span>
+                  <span id="val-rain-modifier">0 mm</span>
+                </div>
+                <input type="range" id="slider-rain" min="0" max="100" value="0">
+              </div>
+
+              <div class="modifier-slider">
+                <div class="slider-labels">
+                  <span>Temperature Offset</span>
+                  <span id="val-temp-modifier">0°C</span>
+                </div>
+                <input type="range" id="slider-temp" min="-10" max="15" value="0">
+              </div>
+
+              <div class="modifier-slider">
+                <div class="slider-labels">
+                  <span>Is Public Holiday</span>
+                  <span id="val-holiday-modifier">No</span>
+                </div>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="toggle-holiday">
+                  <label for="toggle-holiday"></label>
+                </div>
+              </div>
+
+              <button id="run-simulation-btn" class="primary-btn"><i class="fa-solid fa-rotate"></i> Run Predictor</button>
+            </div>
+
+            <!-- Right Side Visualization / Results -->
+            <div class="predict-results-card">
+              <div class="predict-header">
+                <div>
+                  <h3>Forecast Simulation Graph</h3>
+                  <p>Solid line: Historical | Dotted line: Model Forecast Overlay</p>
+                </div>
+                <div class="model-meta-info" id="predict-model-meta">
+                  <span class="badge"><i class="fa-solid fa-microchip"></i> LSTM Model V4</span>
+                  <span class="badge"><i class="fa-solid fa-bullseye"></i> Accuracy: 94.2%</span>
+                </div>
+              </div>
+              <div class="forecast-chart-container">
+                <canvas id="forecastChart"></canvas>
+              </div>
+
+              <!-- Explainable AI in predictions -->
+              <div class="predict-explainability">
+                <h4><i class="fa-solid fa-brain text-purple"></i> Explainable AI (XAI) Feature Importance</h4>
+                <div class="xai-features-grid" id="xai-feature-bars">
+                  <!-- Generated dynamically in app.js -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- 3. SATELLITE & GEO PANEL -->
+        <section id="panel-satellite" class="view-panel">
+          <div class="satellite-workspace">
+            <div class="map-controls">
+              <div class="input-group" style="margin-bottom: 16px;">
+                <label for="map-city-select" style="font-family: var(--font-title); font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 1.5px; display: block; margin-bottom: 8px;"><i class="fa-solid fa-earth-americas"></i> Focus City</label>
+                <div class="select-wrapper">
+                  <select id="map-city-select" style="width: 100%; font-size: 12px; padding: 8px 10px;">
+                    <option value="sf">San Francisco (USA)</option>
+                    <option value="mumbai">Mumbai (India)</option>
+                    <option value="tokyo">Tokyo (Japan)</option>
+                    <option value="london">London (UK)</option>
+                    <option value="sydney">Sydney (Australia)</option>
+                    <option value="saopaulo">São Paulo (Brazil)</option>
+                    <option value="cairo">Cairo (Egypt)</option>
+                    <option value="global">Global View</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="divider" style="margin-bottom: 16px;"></div>
+
+              <h3><i class="fa-solid fa-satellite-dish"></i> Earth Engine Layers</h3>
+              <p class="map-desc">Select satellite multispectral imagery indexes simulated from Sentinel-2 & Landsat-9.</p>
+              
+              <div class="layer-selector">
+                <button class="layer-btn active" id="btn-layer-base">
+                  <i class="fa-solid fa-map"></i> Base Vector Map
+                </button>
+                <button class="layer-btn" id="btn-layer-flood">
+                  <i class="fa-solid fa-cloud-showers-heavy"></i> Flood Hazard Risk
+                </button>
+                <button class="layer-btn" id="btn-layer-ndvi">
+                  <i class="fa-solid fa-leaf"></i> Crop Health (NDVI)
+                </button>
+                <button class="layer-btn" id="btn-layer-heat">
+                  <i class="fa-solid fa-temperature-high"></i> Urban Heat Zone
+                </button>
+              </div>
+
+              <div class="divider"></div>
+
+              <h3><i class="fa-solid fa-timeline"></i> Temporal Timeline</h3>
+              <div class="timeline-slider-container">
+                <div class="timeline-labels">
+                  <span>2020</span>
+                  <span>2022</span>
+                  <span>2024</span>
+                  <span class="active">2026 (Live)</span>
+                </div>
+                <div class="timeline-controls-row">
+                  <input type="range" id="map-timeline" min="2020" max="2026" value="2026" step="2">
+                  <button id="btn-play-timeline" class="icon-btn-secondary" title="Play temporal timelapse"><i class="fa-solid fa-play"></i></button>
+                </div>
+              </div>
+
+              <div class="geo-insights-card">
+                <h4><i class="fa-solid fa-circle-info"></i> Geo-Spatial Insights</h4>
+                <div id="geo-insights-text">
+                  Base city grid active. Toggle layers to view multispectral Earth Engine insights. Map supports zooming and panning.
+                </div>
+              </div>
+            </div>
+            
+            <div class="map-container-wrapper">
+              <div id="leaflet-map"></div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- 4. MULTIMODAL AI PANEL -->
+        <section id="panel-multimodal" class="view-panel">
+          <div class="multimodal-grid">
+            
+            <!-- Image upload / select -->
+            <div class="multimodal-card">
+              <div class="card-title">
+                <h3><i class="fa-solid fa-image"></i> Vertex AI Vision - Image Analyzer</h3>
+                <span class="badge">Gemini-Vision API</span>
+              </div>
+              <p class="panel-desc">Detect garbage overflows, road potholes, and structural damages.</p>
+              
+              <div class="multimodal-selector">
+                <button class="selector-btn active" data-type="garbage" id="btn-sample-garbage">Sample: Garbage Overflow</button>
+                <button class="selector-btn" data-type="pothole" id="btn-sample-pothole">Sample: Road Damage</button>
+              </div>
+
+              <div class="multimodal-preview-area">
+                <div class="image-bounding-box-container" id="image-analyzer-container">
+                  <img id="image-analyzer-img" src="assets/garbage_overflow.png" alt="Select sample image">
+                  <!-- Bounding boxes will be absolutely positioned here by JS -->
+                </div>
+              </div>
+
+              <div class="multimodal-results" id="image-analysis-results">
+                <!-- Results populated by JS -->
+              </div>
+            </div>
+
+            <!-- Video camera / crowd analysis -->
+            <div class="multimodal-card">
+              <div class="card-title">
+                <h3><i class="fa-solid fa-video"></i> Traffic Camera Analytics</h3>
+                <span class="badge">Vertex Video Intelligence</span>
+              </div>
+              <p class="panel-desc font-sm">Crowd density and traffic congestion analysis via CCTV feeds.</p>
+              
+              <div class="multimodal-selector" style="margin-bottom: 16px;">
+                <button class="selector-btn active" id="btn-cam-04">Cam 04 (Plaza)</button>
+                <button class="selector-btn" id="btn-cam-09">Cam 09 (Transit Hub)</button>
+              </div>
+
+              <div class="multimodal-preview-area video">
+                <div class="image-bounding-box-container" id="video-analyzer-container">
+                  <img id="video-analyzer-img" src="assets/crowd_density.png" alt="Traffic Camera Frame">
+                  <div id="video-cam-badge" class="video-overlay-rec"><span class="rec-dot"></span> LIVE CCTV CAM 04</div>
+                  <!-- Video boxes -->
+                </div>
+              </div>
+
+              <div class="multimodal-results" id="video-analysis-results">
+                <div class="analysis-stat-row">
+                  <span>Detected Pedestrians:</span>
+                  <span class="val highlighted">47 individuals</span>
+                </div>
+                <div class="analysis-stat-row">
+                  <span>Crowd Density:</span>
+                  <span class="val text-orange">Dense (0.85 per m²)</span>
+                </div>
+                <div class="analysis-stat-row">
+                  <span>Safety Status:</span>
+                  <span class="val text-green">Stable - Flow Normal</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Voice complaint filing -->
+            <div class="multimodal-card full-width">
+              <div class="card-title">
+                <h3><i class="fa-solid fa-microphone"></i> Vertex AI Speech - Voice Complaint Filing</h3>
+                <span class="badge">Speech-to-Text API</span>
+              </div>
+              <div class="voice-layout">
+                <div class="voice-controls">
+                  <button id="voice-play-sample-btn" class="action-btn">
+                    <i class="fa-solid fa-play"></i> Simulate Citizen Voice Call
+                  </button>
+                  <p class="voice-hint">Press to simulate an incoming emergency voice report from a citizen.</p>
+                  
+                  <div class="audio-player-sim">
+                    <div class="audio-icon"><i class="fa-solid fa-waveform"></i></div>
+                    <div class="audio-wave">
+                      <span class="bar bar-1"></span>
+                      <span class="bar bar-2"></span>
+                      <span class="bar bar-3"></span>
+                      <span class="bar bar-4"></span>
+                      <span class="bar bar-5"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="voice-transcription-box">
+                  <h4>Incoming Voice Transcript:</h4>
+                  <div id="voice-transcript" class="transcript-text text-muted">
+                    Waiting for call simulation...
+                  </div>
+                  <div id="voice-parsed-fields" class="parsed-fields">
+                    <!-- Extracted info via Gemini NLP -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- 5. WORKFLOWS AUTOMATION PANEL -->
+        <section id="panel-workflows" class="view-panel">
+          <div class="workflow-header-actions">
+            <h3><i class="fa-solid fa-circle-nodes"></i> Autonomous Operations Pipeline</h3>
+            <button id="btn-trigger-workflow" class="primary-btn"><i class="fa-solid fa-plus"></i> Simulate Pipeline Trigger</button>
+          </div>
+          
+          <div class="workflow-dashboard">
+            
+            <div class="workflow-canvas">
+              
+              <!-- Workflow 1: Garbage overflow -->
+              <div class="workflow-pipeline" id="flow-garbage">
+                <div class="pipeline-meta">
+                  <span class="pipeline-title">Workflow #108: Automated Waste Mitigation</span>
+                  <span class="pipeline-status running">Active</span>
+                </div>
+                
+                <div class="pipeline-nodes">
+                  <div class="node completed">
+                    <div class="node-icon"><i class="fa-solid fa-eye"></i></div>
+                    <div class="node-details">
+                      <h5>Sensor / Vision Match</h5>
+                      <p>Garbage overflow detected in Sector 3</p>
+                    </div>
+                  </div>
+                  <div class="node-connector completed"></div>
+
+                  <div class="node completed">
+                    <div class="node-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                    <div class="node-details">
+                      <h5>Alert Authority</h5>
+                      <p>Department of Sanitation notified (ID: 992)</p>
+                    </div>
+                  </div>
+                  <div class="node-connector completed"></div>
+
+                  <div class="node active pulsing">
+                    <div class="node-icon"><i class="fa-solid fa-truck"></i></div>
+                    <div class="node-details">
+                      <h5>Assign Truck</h5>
+                      <p>Truck #14 dispatched. ETA: 7 mins</p>
+                    </div>
+                  </div>
+                  <div class="node-connector"></div>
+
+                  <div class="node pending">
+                    <div class="node-icon"><i class="fa-solid fa-square-check"></i></div>
+                    <div class="node-details">
+                      <h5>Track Resolution</h5>
+                      <p>Awaiting photo verification from truck GPS</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Workflow 2: Flood Warning -->
+              <div class="workflow-pipeline" id="flow-flood">
+                <div class="pipeline-meta">
+                  <span class="pipeline-title">Workflow #109: Smart Drainage Gate Control</span>
+                  <span class="pipeline-status standby">Awaiting Trigger</span>
+                </div>
+                
+                <div class="pipeline-nodes">
+                  <div class="node pending" id="flood-node-1">
+                    <div class="node-icon"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
+                    <div class="node-details">
+                      <h5>Rainfall Sentinel</h5>
+                      <p>Rain sensor detects >30mm in Sector 7</p>
+                    </div>
+                  </div>
+                  <div class="node-connector" id="flood-conn-1"></div>
+
+                  <div class="node pending" id="flood-node-2">
+                    <div class="node-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <div class="node-details">
+                      <h5>Notify Citizens</h5>
+                      <p>Automated SMS push alert via Pub/Sub</p>
+                    </div>
+                  </div>
+                  <div class="node-connector" id="flood-conn-2"></div>
+
+                  <div class="node pending" id="flood-node-3">
+                    <div class="node-icon"><i class="fa-solid fa-water"></i></div>
+                    <div class="node-details">
+                      <h5>Sluice Gate Operation</h5>
+                      <p>Open Sector 7 emergency discharge gates by 40%</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="workflow-stats-sidebar">
+              <h4>Active Operational Stats</h4>
+              <div class="stat-card">
+                <span>Total Pipelines Executed:</span>
+                <span class="val">1,482</span>
+              </div>
+              <div class="stat-card">
+                <span>Avg Resolution Time:</span>
+                <span class="val text-green">14.2 min</span>
+              </div>
+              <div class="stat-card">
+                <span>Manual Interventions:</span>
+                <span class="val text-blue">1.2%</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- 6. COMMUNITY INTEL PANEL -->
+        <section id="panel-community" class="view-panel">
+          <div class="community-workspace">
+            
+            <!-- Citizens Complaint Board -->
+            <div class="community-board-card">
+              <div class="board-header">
+                <h3><i class="fa-regular fa-comment-dots"></i> Citizen Issue Reports</h3>
+                <button id="open-report-modal-btn" class="primary-btn btn-sm"><i class="fa-solid fa-plus"></i> File Report</button>
+              </div>
+
+              <div class="report-list" id="citizen-reports-container">
+                <!-- Populated dynamically by JS -->
+              </div>
+            </div>
+
+            <!-- AI Policy Generator -->
+            <div class="community-policy-card">
+              <h3><i class="fa-solid fa-scroll text-purple"></i> AI policy Suggestion Engine</h3>
+              <p class="panel-desc">Vertex AI aggregates reports to suggest city improvement codes.</p>
+              
+              <div class="policy-generation-box">
+                <button id="generate-policy-btn" class="action-btn w-full">
+                  <i class="fa-solid fa-gears"></i> Aggregate Feedback & Draft Policies
+                </button>
+                
+                <div class="policy-draft-output mt-4 hidden" id="policy-output-container">
+                  <div class="policy-header">
+                    <h4>Policy Proposal Draft #SC-2026-4</h4>
+                    <span class="confidence-badge">Confidence Match: 91%</span>
+                  </div>
+                  <div class="policy-body" id="policy-text-body">
+                    <!-- Populated dynamically -->
+                  </div>
+                  <div class="policy-footer">
+                    <button class="vote-action-btn accept" id="policy-accept-btn"><i class="fa-solid fa-check"></i> Export to City Council</button>
+                    <button class="vote-action-btn reject" id="policy-reject-btn"><i class="fa-solid fa-xmark"></i> Refine</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <!-- FOOTER: Multi-Agent ADK Terminal Log -->
+      <footer class="agent-terminal">
+        <div class="terminal-header">
+          <div class="terminal-title">
+            <i class="fa-solid fa-terminal text-green"></i> ADK Multi-Agent Cooperation logs
+          </div>
+          <div class="agent-badges">
+            <span class="agent-badge active-traffic" id="badge-agent-traffic"><i class="fa-solid fa-car"></i> Traffic Agent</span>
+            <span class="agent-badge active-environment" id="badge-agent-env"><i class="fa-solid fa-seedling"></i> Environment Agent</span>
+            <span class="agent-badge active-health" id="badge-agent-health"><i class="fa-solid fa-stethoscope"></i> Health Agent</span>
+            <span class="agent-badge active-utility" id="badge-agent-utility"><i class="fa-solid fa-faucet"></i> Utility Agent</span>
+          </div>
+        </div>
+        <div class="terminal-body" id="adk-logs-body">
+          <div class="terminal-line"><span class="time">[22:45:00]</span> <span class="sys">[System]</span> ADK initialization complete. 4 agents registered.</div>
+          <!-- App.js will push live logs here -->
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR: Conversational AI Assistant -->
+    <aside class="right-assistant">
+      <div class="assistant-header">
+        <div class="assistant-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <h3>Decision Assistant</h3>
+          <p>Gemini RAG + BigQuery</p>
+        </div>
+      </div>
+
+      <div class="presets-container">
+        <span class="presets-title">Quick Queries:</span>
+        <div class="presets-row">
+          <button class="preset-query-btn" data-query="Best time to travel tomorrow?">Travel tomorrow?</button>
+          <button class="preset-query-btn" data-query="Why is water shortage increasing?">Water shortage?</button>
+          <button class="preset-query-btn" data-query="What is the high risk zone right now?">High risks?</button>
+        </div>
+      </div>
+
+      <!-- Chat area -->
+      <div class="chat-history" id="chat-history-container">
+        <div class="chat-msg system">
+          <p>Hello! I am your AI Decision Assistant. You can ask me questions about city analytics, traffic routes, environmental risks, or public utility balances.</p>
+        </div>
+      </div>
+
+      <!-- Text input -->
+      <div class="chat-input-area">
+        <input type="text" id="chat-user-input" placeholder="Ask anything about the city..." aria-label="Ask city questions">
+        <button id="chat-send-btn" class="icon-btn-primary" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+
+      <!-- Explainable AI Panel (Collapsible / Dynamic) -->
+      <div class="xai-explanation-drawer" id="xai-drawer">
+        <div class="xai-drawer-header" id="xai-drawer-toggle">
+          <h4><i class="fa-solid fa-brain"></i> Explainable AI (XAI) Details</h4>
+          <i class="fa-solid fa-chevron-up" id="xai-chevron"></i>
+        </div>
+        <div class="xai-drawer-content" id="xai-drawer-content">
+          <div class="xai-placeholder">
+            Select or ask a question to view data source lineage, decision trees, and system confidence scores.
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Citizen Report Modal -->
+  <div class="modal" id="report-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Report Public Issue</h3>
+        <button id="close-modal-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="report-issue-form">
+        <div class="form-group">
+          <label for="form-title">Issue Title</label>
+          <input type="text" id="form-title" required placeholder="e.g. Water leak on Sector 3 Main St">
+        </div>
+        <div class="form-group">
+          <label for="form-category">Category</label>
+          <select id="form-category">
+            <option value="Water & Utilities">Water & Utilities</option>
+            <option value="Roads & Congestion">Roads & Congestion</option>
+            <option value="Garbage & Hygiene">Garbage & Hygiene</option>
+            <option value="Public Health">Public Health</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="form-desc">Description</label>
+          <textarea id="form-desc" rows="3" required placeholder="Describe the problem details..."></textarea>
+        </div>
+        <button type="submit" class="primary-btn w-full">Submit Issue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Executive Report Modal -->
+  <div class="modal" id="report-export-modal">
+    <div class="modal-content report-modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-invoice"></i> Smart City Executive Report</h3>
+        <button id="close-report-modal-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="report-document-body" id="report-doc-body">
+        <!-- Rendered dynamically in app.js -->
+      </div>
+      <div class="modal-footer" style="margin-top:20px; display:flex; gap:10px;">
+        <button class="primary-btn w-full" id="btn-download-pdf-sim"><i class="fa-solid fa-download"></i> Download PDF Document</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ChartJS and Leaflet Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Main Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
